@@ -3,7 +3,7 @@ const char MAIN_page[] PROGMEM = R"=====(
   <html>
     <head>
       <meta charset="utf-8">
-      <title>Forever alone ping pong</title>
+      <title>Smart Skipping Rope</title>
       <style media="screen">
         html {
           background-color:#89D0BE;
@@ -88,7 +88,7 @@ table#t01 {
      <table id="t01">
   <tr><th>Skipping Rate</th> 
     <th>Calories burnt</th>
-    <th>Weight(kg):<input class="enabled" id="r" type="range" min="0" max="120" step="1" oninput="sendRGB();" value="50"></th>
+    <th>Weight(kg):<input class="enabled" id="r" type="range" min="0" max="120" step="1" oninput="sendWght();" value="50"></th>
     </tr>
   <tr>
     <td id="sr">0 spm</td>
@@ -120,56 +120,26 @@ table#t01 {
           
         }
         else if (e.data.charAt(0) === "S") {
-           //$("#message").removeClass("active");
-           //$("#score").removeClass("game-over");
-           //s=html(e.data);;
+  
            document.getElementById("sr").innerHTML = e.data.substring(1) + " spm";
-          
-           //console.log((e.data);
+
         }
         else if (e.data.charAt(0) === "$") {
            document.getElementById("calory").innerHTML = e.data.substring(1) + " Kcal";
           
         }else {
-           //$("#message").removeClass("active");
-          // $("#score").removeClass("game-over");
-           //$("#score").html(e.data);
-           //console.log((e.data);
+
            document.getElementById("score").innerHTML = e.data;
          }
       };
       
       var rainbowEnable = false;
-      function sendRGB () {
-  var r = document.getElementById('r').value;
-  var rgbstr = '#' + r.toString();
-  document.getElementById("weight").innerHTML = "Weight: " + r+" Kg";
-  console.log('RGB: ' + rgbstr);
-  connection.send(rgbstr);
-}
-function rainbowEffect () {
-  rainbowEnable = ! rainbowEnable;
-  if (rainbowEnable) {
-    connection.send("R");
-    document.getElementById('rainbow').style.backgroundColor = '#00878F';
-    document.getElementById('r').className = 'disabled';
-    //document.getElementById('g').className = 'disabled';
-    //document.getElementById('b').className = 'disabled';
-    document.getElementById('r').disabled = true;
-    //document.getElementById('g').disabled = true;
-    //document.getElementById('b').disabled = true;
-  } else {
-    connection.send("N");
-    document.getElementById('rainbow').style.backgroundColor = '#999';
-    document.getElementById('r').className = 'enabled';
-    //document.getElementById('g').className = 'enabled';
-    //document.getElementById('b').className = 'enabled';
-    document.getElementById('r').disabled = false;
-    //document.getElementById('g').disabled = false;
-    //document.getElementById('b').disabled = false;
-     
-    sendRGB();
-  }
+      function sendWght () {
+  var w = document.getElementById('r').value;
+  var wStr = '#' + r.toString();
+  document.getElementById("weight").innerHTML = "Weight: " + w+" Kg";
+  console.log('RGB: ' + wStr);
+  connection.send(wStr);
 }
 
       </script>
