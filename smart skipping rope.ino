@@ -25,7 +25,8 @@ int counter = 0;
 int aState;
 int aLastState;
 int skipCount =0;
-int prevskipCount =0;  
+int prevskipCount =0; 
+int skips=0; 
 //unsigned long longPress= 6000;
 //unsigned long currentMillis=0;
 //unsigned long prevMillis=0;
@@ -48,7 +49,7 @@ int skippingRate=0;
 float caloriesBurnt;
 int wght=50;
 unsigned long startTime=0;
-String apiKey = "M29CALS4ILHNX6W9"; //assemblage thingspeak key
+String apiKey = "K86MO2SJYG13O825"; //assemblage thingspeak key
 int calories=0;
 bool thingspeak = false;
 /////////////////////////
@@ -147,7 +148,7 @@ void logToThingspeak(String key, int burntCalories, int skipRate, int skips)
        }
         if(!client.available()) 
           {
-            Serial.println("No response, going back to sleep");
+            Serial.println("No response");
            // return false;
           }
         Serial.println(F("disconnected"));
@@ -204,10 +205,23 @@ void loop() {
     webSocket.loop();
     server.handleClient();
     //knockReading = analogRead(A0);
-    delay(1);
+    //delay(1);
     buttonState = digitalRead(button);
     
-    skipCount = countSkips();
+    aState = digitalRead(outputA); // Reads the "current" state of the outputA
+    // If the previous and the current state of the outputA are different, that means a Pulse has occured
+    if(aState != aLastState){     
+      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
+      if(digitalRead(outputB) != aState){ 
+         counter ++;
+   
+       } 
+      else{
+        }
+      
+     } 
+    aLastState = aState; // Updates the previous state of the outputA with the current state
+    delay(18);
     
     if(buttonState != lastButtonState){
       if(buttonState == HIGH){
@@ -218,15 +232,16 @@ void loop() {
       //Serial.print("Activity Started");
       digitalWrite(led,HIGH);
       // If there is a bounce, send a message to websocket
-      /*if(skipCount >= 1){
-        //score = score + 1;
-        //counter = 0;
+      if(counter >= 5){
+        skipCount = skipCount + 1;
+        counter = 0;
         playing = true;
-      } */
+        //Serial.print("Counts: ");
+        //Serial.println(skipCount);
+      } 
       if(skipCount==1){
          thingspeak = true;
          startTime = millis();
-         playing = true;
       }
             
       if(skippingRate < 100) met=8.8;
@@ -245,13 +260,13 @@ void loop() {
         String cb = "$"+String(calories);
         webSocket.sendTXT(0,cb);
       }
-      else if(skipCount != prevskipCount){  
+      else {  
        //last_bounce = millis();
        String thisString = String(skipCount);
        webSocket.sendTXT(0,thisString);
        prevskipCount = skipCount;
       }
-      delay(20);
+      //delay(10);
     } 
  
     else{
@@ -264,35 +279,11 @@ void loop() {
        logToThingspeak(apiKey, calories, skippingRate, skipCount);
        thingspeak = false;  
       }
-     skipCount = -1;
+     skipCount = 0;
+     skips=0;
      playing=false;
      delay(100);
     }
   lastButtonState = buttonState; 
 }
 
-
-int countSkips(){
-  int skips;
-  aState = digitalRead(outputA); // Reads the "current" state of the outputA
-    // If the previous and the current state of the outputA are different, that means a Pulse has occured
-    if(aState != aLastState){     
-      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
-      if(digitalRead(outputB) != aState){ 
-         counter ++;
-         if(counter > 4){
-           counter =0;
-           skips+=1;
-         }
-       } 
-      else{
-        // counter --;
-        }
-      //Serial.print("Position: ");
-      //Serial.println(counter);
-      //Serial.print("Counts: ");
-      //Serial.println(skips);
-     } 
-    aLastState = aState; // Updates the previous state of the outputA with the current state
-    delay(30);
-}
