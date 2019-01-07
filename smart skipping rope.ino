@@ -44,7 +44,7 @@ int skippingRate=0;
 float caloriesBurnt;
 int wght=50;
 unsigned long startTime=0;
-String apiKey = "K86MO2SJYG13O825"; //assemblage thingspeak key
+String apiKey = "*****************"; 
 int calories=0;
 bool thingspeak = false;
 /////////////////////////
